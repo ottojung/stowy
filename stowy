@@ -23,17 +23,17 @@ error() {
 }
 
 show_help() {
-	echo "$0 is a dotfiles deployment script, a very simple version of 'stow'" 1>&2
-	echo "Usage: $0 [OPTS...] run    <SOURCE> <TARGET>" 1>&2
-	echo "       $0 [OPTS...] dryrun <SOURCE> <TARGET>" 1>&2
-	echo "       $0 [OPTS...] check  <SOURCE> <TARGET>" 1>&2
-	echo "       $0 -v" 1>&2
-	echo "" 1>&2
-	echo "OPTS:  --overwrite | --no-overwrite | --safe | --unsafe | --quiet | --verbose | --readlink | --no-readlink | --keep-going | --no-keep-going" 1>&2
-	echo "Defaults: --safe --no-overwrite --verbose --no-readlink --no-keep-going" 1>&2
-	echo "Notes: --no-overwrite implies --readlink" 1>&2
-	echo "To do a cleanup (uninstall), make use of STOWY_LINK_CMD variable" 1>&2
-	echo "  like this: 'STOWY_LINK_CMD=rm ./stowy ...'" 1>&2
+	yell "$0 is a dotfiles deployment script, a very simple version of 'stow'"
+	yell "Usage: $0 [OPTS...] run    <SOURCE> <TARGET>"
+	yell "       $0 [OPTS...] dryrun <SOURCE> <TARGET>"
+	yell "       $0 [OPTS...] check  <SOURCE> <TARGET>"
+	yell "       $0 -v"
+	yell ""
+	yell "OPTS:  --overwrite | --no-overwrite | --safe | --unsafe | --quiet | --verbose | --readlink | --no-readlink | --keep-going | --no-keep-going"
+	yell "Defaults: --safe --no-overwrite --verbose --no-readlink --no-keep-going"
+	yell "Notes: --no-overwrite implies --readlink"
+	yell "To do a cleanup (uninstall), make use of STOWY_LINK_CMD variable"
+	yell "  like this: 'STOWY_LINK_CMD=rm ./stowy ...'"
 }
 
 require() {
@@ -205,7 +205,7 @@ my_link() {
 	fi
 
 	if ! test "$VERBOSITY" = 0 && ! test "$MODE" = "check"
-	then echo $STOWY_LINK_CMD "$SRC" "$TGT"
+	then yell $STOWY_LINK_CMD "$SRC" "$TGT"
 	fi
 
 	test "$MODE" = "run" && $STOWY_LINK_CMD "$SRC" "$TGT"
@@ -243,7 +243,7 @@ my_install() {
 			else my_link "$FILE"
 			fi
 		else
-			echo "WARN: Skipping irregular file '$STACK/$FILE'" 1>&2
+			yell "WARN: Skipping irregular file '$STACK/$FILE'"
 		fi
 	done
 }
