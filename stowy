@@ -1,18 +1,24 @@
 #! /bin/sh
 
+VERSION=1.0
+
 ####################
 # Helper functions #
 ####################
 
+yell() {
+	echo "$*" 1>&2
+}
+
 fatal() {
-	echo "ERROR: $*" 1>&2
+	yell "ERROR: $*"
 	exit 1
 }
 
 error() {
 	if test "$KEEP_GOING" = "0"
 	then fatal "$*"
-	else test "$MODE" = "check" || echo "IGNORED: $*" 1>&2
+	else test "$MODE" = "check" || yell "IGNORED: $*"
 	fi
 }
 
@@ -21,6 +27,7 @@ show_help() {
 	echo "Usage: $0 [OPTS...] run    <SOURCE> <TARGET>" 1>&2
 	echo "       $0 [OPTS...] dryrun <SOURCE> <TARGET>" 1>&2
 	echo "       $0 [OPTS...] check  <SOURCE> <TARGET>" 1>&2
+	echo "       $0 -v" 1>&2
 	echo "" 1>&2
 	echo "OPTS:  --overwrite | --no-overwrite | --safe | --unsafe | --quiet | --verbose | --readlink | --no-readlink | --keep-going | --no-keep-going" 1>&2
 	echo "Defaults: --safe --no-overwrite --verbose --no-readlink --no-keep-going" 1>&2
@@ -71,6 +78,14 @@ do
 	OPT="$1"
 	shift
 	case "$OPT" in
+		-v)
+			echo "$VERSION"
+			exit 1
+			;;
+		--version)
+			echo "$VERSION"
+			exit 1
+			;;
 		--overwrite)
 			OVERWRITE=1
 			;;
