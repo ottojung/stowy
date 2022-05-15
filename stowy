@@ -50,8 +50,11 @@ show_help() {
 }
 
 require() {
-	if ! command -v "$1" 1>/dev/null 2>/dev/null
-	then fatal "'$1' is required to deploy links"
+	PROGRAM="$1"
+	shift
+
+	if ! command -v "$PROGRAM" 1>/dev/null 2>/dev/null
+	then fatal "'$PROGRAM' is required $*"
 	fi
 }
 
@@ -182,17 +185,17 @@ case "$TARGET" in
 	*) TARGET="$PWD/$TARGET" ;;
 esac
 
-require ls
-require ln
-require tr
-require head
+require ls to list files
+require ln to make symlinks
+require tr to handle internal stack
+require head to handle internal stack
 
 if test "$OVERWRITE" = 0
-then require readlink
+then require readlink to inspect symlinks
 fi
 
 if test "$READLINK" = 1
-then require readlink
+then require readlink to inspect symlinks
 fi
 
 if test -z "$STOWY_LINK_CMD"
