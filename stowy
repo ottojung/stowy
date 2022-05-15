@@ -48,7 +48,7 @@ show_help() {
 	yell "       --readlink | --no-readlink |"
 	yell "       --keep-going | --no-keep-going"
 	yell ""
-	yell "Defaults are --safe, --no-overwrite, --verbose, --no-readlink, and --no-keep-going."
+	yell "Defaults are --safe, --no-overwrite, --verbose, --readlink, and --no-keep-going."
 	yell ""
 	yell "Note that --no-overwrite implies --readlink."
 	yell ""
@@ -92,7 +92,7 @@ my_popd() {
 
 OVERWRITE=0
 VERBOSITY=1
-READLINK=0
+READLINK=1
 SAFE=1
 KEEP_GOING=0
 
