@@ -67,7 +67,7 @@ require() {
 }
 
 my_pushd() {
-	if test -d "$1"
+	if test -d "$SOURCE/$STACK/$1"
 	then
 		if test -z "$STACK"
 		then STACK="$1"
