@@ -194,7 +194,6 @@ case "$TARGET" in
 esac
 
 require ls to list files
-require ln to make symlinks
 require tr to handle internal stack
 require head to handle internal stack
 
@@ -207,7 +206,9 @@ then require readlink to inspect symlinks
 fi
 
 if test -z "$STOWY_LINK_CMD"
-then STOWY_LINK_CMD="ln -srf"
+then
+	STOWY_LINK_CMD="ln -srf"
+	require ln to make symlinks
 fi
 
 ################
