@@ -116,11 +116,9 @@ do
 			;;
 		--safe)
 			SAFE=1
-			OVERWRITE=0
 			;;
 		--unsafe)
 			SAFE=0
-			OVERWRITE=1
 			;;
 		--quiet)
 			VERBOSITY=0
