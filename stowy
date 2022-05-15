@@ -82,7 +82,7 @@ my_pushd() {
 my_popd() {
 	STACK=$(echo "$STACK" | tr -s '/' | tr '/' '\n' | head -n -1 | tr '\n' '/' | tr -s '/')
 	case "$STACK" in
-		*/) STACK=${STACK%?} ;;
+		*/) STACK="${STACK%?}" ;;
 	esac
 }
 
@@ -235,7 +235,7 @@ my_link() {
 my_install_push() {
 	if test "$READLINK" = 1 && test $(readlink -f "$SOURCE/$STACK/$1" || echo "///") = $(readlink -f "$TARGET/$STACK/$1" || echo "//")
 	then
-		test "$OVERWRITE" = 1 && test -n "$STOWY_LINK_CMD" && my_link "."
+		test "$OVERWRITE" = 1 && test -n "$STOWY_LINK_CMD" && my_link "$1"
 		return
 	fi
 
