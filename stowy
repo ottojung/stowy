@@ -92,7 +92,6 @@ KEEP_GOING=0
 while true
 do
 	OPT="$1"
-	shift
 	case "$OPT" in
 		-v)
 			echo "$VERSION"
@@ -135,20 +134,20 @@ do
 			KEEP_GOING=0
 			;;
 		run)
-			SOURCE="$1"
-			TARGET="$2"
+			SOURCE="$2"
+			TARGET="$3"
 			MODE=run
 			break
 			;;
 		dryrun)
-			SOURCE="$1"
-			TARGET="$2"
+			SOURCE="$2"
+			TARGET="$3"
 			MODE=dryrun
 			break
 			;;
 		check)
-			SOURCE="$1"
-			TARGET="$2"
+			SOURCE="$2"
+			TARGET="$3"
 			MODE=check
 			break
 			;;
@@ -157,6 +156,7 @@ do
 			exit 1
 			;;
 	esac
+	shift
 done
 
 if ! test -d "$SOURCE"
