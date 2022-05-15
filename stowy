@@ -53,7 +53,7 @@ show_help() {
 	yell "Note that --no-overwrite implies --readlink."
 	yell ""
 	yell "To do a cleanup (uninstall), make use of STOWY_LINK_CMD variable, like so:"
-	yell "  STOWY_LINK_CMD=remove-command ./stowy ..."
+	yell "  STOWY_LINK_CMD=remove-command ./stowy --overwrite ..."
 	yell "where the 'remove-command' is a program like 'link-cmds/remove.sh'"
 }
 
