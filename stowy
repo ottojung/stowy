@@ -232,7 +232,7 @@ my_link() {
 }
 
 my_install_push() {
-	if test "$READLINK" = 1 && test $(readlink -f "$1" || echo "/") = $(readlink -f "$TARGET/$STACK/$1" || echo "//")
+	if test "$READLINK" = 1 && test $(readlink -f "$1" || echo "///") = $(readlink -f "$TARGET/$STACK/$1" || echo "//")
 	then return 0
 	fi
 
@@ -242,6 +242,10 @@ my_install_push() {
 }
 
 my_install() {
+	if test "$READLINK" = 1 && test $(readlink -f "$SOURCE/$STACK/" || echo "///") = $(readlink -f "$TARGET/$STACK/" || echo "//")
+	then return 0
+	fi
+
 	ls -a "$SOURCE/$STACK/" | while IFS= read -r FILE
 	do
 		if test "$FILE" = "." || test "$FILE" = ".."
