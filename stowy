@@ -177,6 +177,11 @@ then
 	fatal "Target '$TARGET' should be a directory, but is not"
 fi
 
+if test "$OVERWRITE" = 0 && test "$READLINK" = 0
+then
+	fatal "Flag --no-readlink can only be used together with --overwrite"
+fi
+
 ###############
 # Preparation #
 ###############
@@ -209,7 +214,7 @@ my_link() {
 
 	if test "$OVERWRITE" = 0 && test -e "$TGT"
 	then
-		if test "$READLINK" = 1 && test $(readlink -f "$TGT" || echo "/") = $(readlink -f "$SRC" || echo "//")
+		if test $(readlink -f "$TGT" || echo "/") = $(readlink -f "$SRC" || echo "//")
 		then return 0
 		else
 			 error "Want to replace file '$(readlink -f "$SRC" || echo "//")'\n  by '$(readlink -f "$TGT" || echo "//")'\n  but that is only allowed with --overwrite flag"
