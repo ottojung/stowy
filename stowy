@@ -181,16 +181,6 @@ fi
 # Preparation #
 ###############
 
-case "$SOURCE" in
-	/*) ;;
-	*) SOURCE="$PWD/$SOURCE" ;;
-esac
-
-case "$TARGET" in
-	/*) ;;
-	*) TARGET="$PWD/$TARGET" ;;
-esac
-
 require ls to list files
 require tr to handle internal stack
 require head to handle internal stack
