@@ -67,7 +67,7 @@ require() {
 }
 
 my_pushd() {
-	if cd "$1"
+	if test -d "$1"
 	then
 		if test -z "$STACK"
 		then STACK="$1"
@@ -84,7 +84,6 @@ my_popd() {
 	case "$STACK" in
 		*/) STACK=${STACK%?} ;;
 	esac
-	cd ..
 }
 
 ####################
@@ -247,28 +246,29 @@ my_install_push() {
 }
 
 my_install() {
-	ls -a | while IFS= read -r FILE
+	ls -a "$SOURCE/$STACK/" | while IFS= read -r FILE
 	do
 		if test "$FILE" = "." || test "$FILE" = ".."
 		then continue
 		fi
 
-		if test -d "$FILE"
+		FULLNAME="$STACK/$FILE"
+		if test -d "$SOURCE/$FULLNAME"
 		then
-			if test -d "$TARGET/$STACK/$FILE"
+			if test -d "$TARGET/$FULLNAME"
 			then my_install_push "$FILE"
-			elif test -e "$TARGET/$STACK/$FILE" && test "$SAFE" = 1
-			then error "Want to place directory '$STACK/$FILE' in '$TARGET', but there is something else there!"
+			elif test -e "$TARGET/$FULLNAME" && test "$SAFE" = 1
+			then error "Want to place directory '$FULLNAME' in '$TARGET', but there is something else there!"
 			else my_link "$FILE"
 			fi
-		elif test -f "$FILE"
+		elif test -f "$SOURCE/$FULLNAME"
 		then
-			if test -e "$TARGET/$STACK/$FILE" && ! test -f "$TARGET/$STACK/$FILE" && test "$SAFE" = 1
-			then error "Want to place file '$STACK/$FILE' in '$TARGET', but there is something else there!"
+			if test -e "$TARGET/$FULLNAME" && ! test -f "$TARGET/$FULLNAME" && test "$SAFE" = 1
+			then error "Want to place file '$FULLNAME' in '$TARGET', but there is something else there!"
 			else my_link "$FILE"
 			fi
 		else
-			yell "WARN: Skipping irregular file '$STACK/$FILE'"
+			yell "WARN: Skipping irregular file '$SOURCE/$FULLNAME'"
 		fi
 	done
 }
@@ -276,8 +276,6 @@ my_install() {
 #############
 # Execution #
 #############
-
-cd "$SOURCE"
 
 case "$MODE" in
 	dryrun)
