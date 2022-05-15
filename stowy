@@ -230,7 +230,9 @@ my_link() {
 	then yell $STOWY_LINK_CMD "$SRC" "$TGT"
 	fi
 
-	test "$MODE" = "run" && $STOWY_LINK_CMD "$SRC" "$TGT"
+	if test "$MODE" = "run"
+	then $STOWY_LINK_CMD "$SRC" "$TGT" || error "Link failed"
+	fi
 }
 
 my_install_push() {
