@@ -113,6 +113,7 @@ do
 			;;
 		--no-overwrite)
 			OVERWRITE=0
+			READLINK=1
 			;;
 		--safe)
 			SAFE=1
@@ -216,7 +217,7 @@ my_link() {
 	SRC=$(echo "$SOURCE/$STACK/$1" | tr -s "/")
 	TGT=$(echo "$TARGET/$STACK/$1" | tr -s "/")
 
-	if test "$OVERWRITE" = 0 && test -e "$TGT"
+	if test "$OVERWRITE" = 0 && test "$READLINK" = 1 && test -e "$TGT"
 	then
 		if test $(readlink -f "$TGT" || echo "/") = $(readlink -f "$SRC" || echo "//")
 		then return 0
