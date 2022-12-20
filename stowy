@@ -285,7 +285,12 @@ case "$MODE" in
 		;;
 	run)
 		MODE=check
-		my_install || exit 1
+		if my_install
+		then true
+		else if test "$KEEP_GOING" = 0
+		     then exit 1
+		     fi
+		fi
 		MODE=run
 		my_install
 		;;
