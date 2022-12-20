@@ -285,7 +285,7 @@ case "$MODE" in
 		;;
 	run)
 		MODE=check
-		my_install
+		my_install || exit 1
 		MODE=run
 		my_install
 		;;
