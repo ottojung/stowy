@@ -54,7 +54,8 @@ show_help() {
 	yell ""
 	yell "To do a cleanup (uninstall), make use of STOWY_LINK_CMD variable, like so:"
 	yell "  STOWY_LINK_CMD=remove-command ./stowy --overwrite ..."
-	yell "where the 'remove-command' is a program like 'link-cmds/remove.sh'"
+	yell "where the 'remove-command' is a program like 'ln -sfT'"
+	yell "Variable STOWY_RECURSE_CMD controls recursion decisions."
 }
 
 require() {
@@ -205,6 +206,11 @@ else
 	require ln to make symlinks
 fi
 
+if test -n "$STOWY_RECURSE_CMD"
+then RECURSE_CMD="$STOWY_RECURSE_CMD"
+else RECURSE_CMD="true"
+fi
+
 ################
 # Installation #
 ################
@@ -233,6 +239,10 @@ my_link() {
 }
 
 my_install_push() {
+	if ! $RECURSE_CMD "$SOURCE/$STACK/$1" "$TARGET/$STACK/$1"
+	then return
+	fi
+
 	if test "$READLINK" = 1 && test $(readlink -f "$SOURCE/$STACK/$1" || echo "///") = $(readlink -f "$TARGET/$STACK/$1" || echo "//")
 	then
 		test "$OVERWRITE" = 1 && test -n "$STOWY_LINK_CMD" && my_link "$1"
