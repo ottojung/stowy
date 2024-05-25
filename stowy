@@ -201,7 +201,7 @@ fi
 if test -n "$STOWY_LINK_CMD"
 then LINK_CMD="$STOWY_LINK_CMD"
 else
-	LINK_CMD="ln -srf"
+	LINK_CMD="ln -srfT"
 	require ln to make symlinks
 fi
 
