@@ -76,7 +76,7 @@ my_pushd() {
 		fi
 		STACK=$(echo "$STACK" | tr -s "/")
 	else
-		return $?
+		return 1
 	fi
 }
 
@@ -240,13 +240,13 @@ my_link() {
 
 my_install_push() {
 	if ! $RECURSE_CMD "$SOURCE/$STACK/$1" "$TARGET/$STACK/$1"
-	then return
+	then return 0
 	fi
 
 	if test "$READLINK" = 1 && test $(readlink -f "$SOURCE/$STACK/$1" || echo "///") = $(readlink -f "$TARGET/$STACK/$1" || echo "//")
 	then
 		test "$OVERWRITE" = 1 && test -n "$STOWY_LINK_CMD" && my_link "$1"
-		return
+		return 0
 	fi
 
 	my_pushd "$1"
