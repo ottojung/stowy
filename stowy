@@ -81,9 +81,9 @@ my_pushd() {
 }
 
 my_popd() {
-	STACK=$(echo "$STACK" | tr -s '/' | tr '/' '\n' | head -n -1 | tr '\n' '/' | tr -s '/')
 	case "$STACK" in
-		*/) STACK="${STACK%?}" ;;
+		*/*) STACK="${STACK%/*}" ;;
+		*) STACK="" ;;
 	esac
 }
 
@@ -189,7 +189,6 @@ fi
 
 require ls to list files
 require tr to handle internal stack
-require head to handle internal stack
 
 if test "$OVERWRITE" = 0
 then require readlink to inspect symlinks
