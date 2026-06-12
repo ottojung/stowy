@@ -247,7 +247,9 @@ my_install_push() {
 
 	if test "$READLINK" = 1
 	then
-		if test "$(readlink -f "$SOURCE/$STACK/$1" || echo "///")" = "$(readlink -f "$TARGET/$STACK/$1" || echo "//")"
+		LEFT=$(readlink -f "$SOURCE/$STACK/$1" || echo "///")
+		RIGHT=$(readlink -f "$TARGET/$STACK/$1" || echo "//")
+		if test "$LEFT" = "$RIGHT"
 		then
 			test "$OVERWRITE" = 1 && test -n "$STOWY_LINK_CMD" && my_link "$1"
 			return 0
