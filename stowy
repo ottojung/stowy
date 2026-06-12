@@ -58,6 +58,13 @@ show_help() {
 	yell "Variable STOWY_RECURSE_CMD controls recursion decisions."
 }
 
+join_path() {
+	case "$2" in
+		"") printf '%s/%s\n' "$1" "$3" ;;
+		*)  printf '%s/%s/%s\n' "$1" "$2" "$3" ;;
+	esac
+}
+
 require() {
 	PROGRAM="$1"
 	shift
@@ -68,13 +75,13 @@ require() {
 }
 
 my_pushd() {
-	if test -d "$SOURCE/$STACK/$1"
+	TARGET=$(join_path "$SOURCE" "$STACK" "$1")
+	if test -d "$TARGET"
 	then
 		if test -z "$STACK"
 		then STACK="$1"
 		else STACK="$STACK/$1"
 		fi
-		STACK=$(echo "$STACK" | tr -s "/")
 	else
 		return 1
 	fi
@@ -215,8 +222,8 @@ fi
 ################
 
 my_link() {
-	SRC=$(echo "$SOURCE/$STACK/$1" | tr -s "/")
-	TGT=$(echo "$TARGET/$STACK/$1" | tr -s "/")
+	SRC=$(join_path "$SOURCE" "$STACK" "$1")
+	TGT=$(join_path "$TARGET" "$STACK" "$1")
 
 	if test "$OVERWRITE" = 0 && test -e "$TGT"
 	then
@@ -240,14 +247,17 @@ my_link() {
 }
 
 my_install_push() {
-	if ! $RECURSE_CMD "$SOURCE/$STACK/$1" "$TARGET/$STACK/$1"
+	SRC=$(join_path "$SOURCE" "$STACK" "$1")
+	TGT=$(join_path "$TARGET" "$STACK" "$1")
+
+	if ! $RECURSE_CMD "$SRC" "$TGT"
 	then return 0
 	fi
 
 	if test "$READLINK" = 1
 	then
-		LEFT=$(readlink -f "$SOURCE/$STACK/$1" || echo "///")
-		RIGHT=$(readlink -f "$TARGET/$STACK/$1" || echo "//")
+		LEFT=$(readlink -f "$SRC" || echo "///")
+		RIGHT=$(readlink -f "$TGT" || echo "//")
 		if test "$LEFT" = "$RIGHT"
 		then
 			test "$OVERWRITE" = 1 && test -n "$STOWY_LINK_CMD" && my_link "$1"
@@ -261,7 +271,8 @@ my_install_push() {
 }
 
 my_install() {
-	ls -a "$SOURCE/$STACK/" | while IFS= read -r FILE
+	SRC=$(join_path "$SOURCE" "$STACK" "")
+	ls -a "$SRC" | while IFS= read -r FILE
 	do
 		if test "$FILE" = "." || test "$FILE" = ".."
 		then continue
