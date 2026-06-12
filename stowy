@@ -45,12 +45,9 @@ show_help() {
 	yell "OPTS:  --overwrite | --no-overwrite |"
 	yell "       --safe | --unsafe |"
 	yell "       --quiet | --verbose |"
-	yell "       --readlink | --no-readlink |"
 	yell "       --keep-going | --no-keep-going"
 	yell ""
-	yell "Defaults are --safe, --no-overwrite, --verbose, --readlink, and --no-keep-going."
-	yell ""
-	yell "Note that --no-overwrite implies --readlink."
+	yell "Defaults are --safe, --no-overwrite, --verbose, and --no-keep-going."
 	yell ""
 	yell "To do a cleanup (uninstall), make use of STOWY_LINK_CMD variable, like so:"
 	yell "  STOWY_LINK_CMD=remove-command ./stowy --overwrite ..."
@@ -63,6 +60,10 @@ join_path() {
 		"") printf '%s/%s\n' "$1" "$3" ;;
 		*)  printf '%s/%s/%s\n' "$1" "$2" "$3" ;;
 	esac
+}
+
+same_file() {
+	test "$1" -ef "$2" 2>/dev/null
 }
 
 require() {
@@ -100,7 +101,6 @@ my_popd() {
 
 OVERWRITE=0
 VERBOSITY=1
-READLINK=1
 SAFE=1
 KEEP_GOING=0
 
@@ -121,7 +121,6 @@ do
 			;;
 		--no-overwrite)
 			OVERWRITE=0
-			READLINK=1
 			;;
 		--safe)
 			SAFE=1
@@ -134,12 +133,6 @@ do
 			;;
 		--verbose)
 			VERBOSITY=1
-			;;
-		--readlink)
-			READLINK=1
-			;;
-		--no-readlink)
-			READLINK=0
 			;;
 		--keep-going)
 			KEEP_GOING=1
@@ -185,25 +178,12 @@ then
 	fatal "Target '$TARGET' should be a directory, but is not"
 fi
 
-if test "$OVERWRITE" = 0 && test "$READLINK" = 0
-then
-	fatal "Flag --no-readlink can only be used together with --overwrite"
-fi
-
 ###############
 # Preparation #
 ###############
 
 require ls to list files
 require tr to handle internal stack
-
-if test "$OVERWRITE" = 0
-then require readlink to inspect symlinks
-fi
-
-if test "$READLINK" = 1
-then require readlink to inspect symlinks
-fi
 
 if test -n "$STOWY_LINK_CMD"
 then LINK_CMD="$STOWY_LINK_CMD"
@@ -227,9 +207,7 @@ my_link() {
 
 	if test "$OVERWRITE" = 0 && test -e "$TGT"
 	then
-		LEFT=$(readlink -- "$TGT" || echo "///")
-		RIGHT=$(readlink -- "$SRC" || echo "//")
-		if test "$LEFT" = "$RIGHT"
+		if same_file "$SRC" "$TGT"
 		then return 0
 		else
 			 error "Want to replace file '$LEFT' by '$RIGHT', but that is only allowed with --overwrite flag"
@@ -254,15 +232,10 @@ my_install_push() {
 	then return 0
 	fi
 
-	if test "$READLINK" = 1
+	if same_file "$SRC" "$TGT"
 	then
-		LEFT=$(readlink -- "$SRC" || echo "///")
-		RIGHT=$(readlink -- "$TGT" || echo "//")
-		if test "$LEFT" = "$RIGHT"
-		then
-			test "$OVERWRITE" = 1 && test -n "$STOWY_LINK_CMD" && my_link "$1"
-			return 0
-		fi
+		test "$OVERWRITE" = 1 && test -n "$STOWY_LINK_CMD" && my_link "$1"
+		return 0
 	fi
 
 	my_pushd "$1"
