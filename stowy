@@ -227,8 +227,8 @@ my_link() {
 
 	if test "$OVERWRITE" = 0 && test -e "$TGT"
 	then
-		LEFT=$(readlink "$TGT" || echo "///")
-		RIGHT=$(readlink "$SRC" || echo "//")
+		LEFT=$(readlink -- "$TGT" || echo "///")
+		RIGHT=$(readlink -- "$SRC" || echo "//")
 		if test "$LEFT" = "$RIGHT"
 		then return 0
 		else
@@ -256,8 +256,8 @@ my_install_push() {
 
 	if test "$READLINK" = 1
 	then
-		LEFT=$(readlink "$SRC" || echo "///")
-		RIGHT=$(readlink "$TGT" || echo "//")
+		LEFT=$(readlink -- "$SRC" || echo "///")
+		RIGHT=$(readlink -- "$TGT" || echo "//")
 		if test "$LEFT" = "$RIGHT"
 		then
 			test "$OVERWRITE" = 1 && test -n "$STOWY_LINK_CMD" && my_link "$1"
